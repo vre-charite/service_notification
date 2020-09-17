@@ -6,3 +6,6 @@ class ConfigClass(object):
     smtp_user = 'oit.on.ca'
     smtp_pass = '1991alex'
     smtp_port = 587
+
+    POSTFIX_URL = "external-postfix.utility"
+    POSTFIX_PORT = 25
