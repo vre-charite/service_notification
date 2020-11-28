@@ -43,22 +43,8 @@ class WriteEmails(Resource):
                 'missing sender or receiver or message')
             return {'result': 'missing sender or receiver or message'}, 400
 
-        msg = MIMEMultipart()
-        msg['From'] = sender
-        msg['To'] = ";".join(receiver)
-        msg['Subject'] = Header(subject, 'utf-8')
-
-        if msg_type == 'plain':
-            msg.attach(MIMEText(text, 'plain', 'utf-8'))
-        elif msg_type == 'html':
-            msg.attach(MIMEText(text, 'html', 'utf-8'))
-        else:
-            current_app.logger.exception('wrong email type')
-            return {'result': 'wrong email type'}, 400
-
         current_app.logger.info(f'payload: {post_data}')
         current_app.logger.info(f'receiver: {receiver}')
-        current_app.logger.info(f'message: {msg}')
         try:
             env = os.environ.get('env')
             if env is None or env == 'charite':
@@ -75,12 +61,30 @@ class WriteEmails(Resource):
                 f'Error connecting with Mail host, {e}')
             return {'result': str(e)}, 500
 
-        try:
-            client.sendmail(sender, receiver, msg.as_string())
-        except Exception as e:
-            current_app.logger.exception(
-                f'Error when sending email to {receiver}, {e}')
-            return {'result': str(e)}, 500
+        if not isinstance(receiver, list):
+            return {'result': 'receiver must be a list'}, 400
+
+        for to in receiver:
+            msg = MIMEMultipart()
+            msg['From'] = sender
+            msg['To'] =  to 
+            msg['Subject'] = Header(subject, 'utf-8')
+
+            if msg_type == 'plain':
+                msg.attach(MIMEText(text, 'plain', 'utf-8'))
+            elif msg_type == 'html':
+                msg.attach(MIMEText(text, 'html', 'utf-8'))
+            else:
+                current_app.logger.exception('wrong email type')
+                return {'result': 'wrong email type'}, 400
+
+            try:
+                current_app.logger.info(f'message: {msg}')
+                client.sendmail(sender, to, msg.as_string())
+            except Exception as e:
+                current_app.logger.exception(
+                    f'Error when sending email to {receiver}, {e}')
+                return {'result': str(e)}, 500
         client.quit()
         current_app.logger.info(f'Email sent successfully to {receiver}')
         return {'result': "Email sent successfully. "}, 200

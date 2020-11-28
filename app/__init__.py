@@ -32,4 +32,3 @@ def create_app(extra_config_settings={}):
     app.logger.setLevel(logging.INFO)
     app.logger.info('start')   
     return app
-    
