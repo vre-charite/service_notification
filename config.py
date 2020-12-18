@@ -9,3 +9,6 @@ class ConfigClass(object):
 
     POSTFIX_URL = "external-postfix.utility"
     POSTFIX_PORT = 25
+
+    ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
+    IMAGE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
