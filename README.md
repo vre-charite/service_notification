@@ -11,3 +11,4 @@ curl --header "Content-Type: application/json"   --request POST   --data '{"send
     "result": "Email sent successfully. "
 }
 ```
+

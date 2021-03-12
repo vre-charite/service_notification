@@ -1,0 +1,16 @@
+<!DOCTYPE html>                                                                                             
+<html>
+  <body>                                                                                                     
+    <h4>Dear {{ username }},</h4>                                                                                      
+    <p>{{ admin_name }} has modified your access in the following project:</p><br>                                       
+    <p>Project Name: {{ project_name }}</p>                                                                                
+    <p>New Role: {{ role }}</p><br>                                                                                
+      <p>In order to access the project please visit the link below and login using your credentials: </p>   
+      <a href="{{ login_url }}">{{ login_url }}</a><br>                                                                                
+       <p>If you are having difficulty accessing the link please copy and paste the following into your browser:</p>
+       <p>{{ login_url }}</p><br>                                                                                          
+       <p>If you believe this modification was made in error please contact the Platform Administrator: <a href="mailto: {{ admin_email }}">{{ admin_email }}</a></p>
+       <br><br><br><br>                                                                                       
+       <p>This is an automated message. Should you require assistance please contact: <a href="mailto: {{ admin_email }}">{{ admin_email }}</a></p><br>
+   </body>                                                                                                    
+</html>
