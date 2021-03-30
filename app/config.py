@@ -27,5 +27,5 @@ class ConfigClass(object):
         RDS_PWD = "opsdb-jrjmfa9svvC"
     RDS_SCHEMA_DEFAULT = "indoc_vre"
 
-    SQLALCHEMY_DATABASE_URI = f"postgres://{RDS_USER}:{RDS_PWD}@{RDS_HOST}/{RDS_DBNAME}"
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{RDS_USER}:{RDS_PWD}@{RDS_HOST}/{RDS_DBNAME}"
 

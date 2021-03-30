@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h4>Dear VRE Administrator,</h4>
+        <p>{{ username }} has requested access into {{ request_for }} in the project:</p>
+        <p>Project Name: {{ project_name }}</p>
+        <p>Project Code: {{ project_code }}</p>
+        <p>{{ username }}'s role: Project {{ user_role }}</p>
+        <br>
+        <p>In order to setup the permission, please visit the link below:</p>
+        {% if request_for == "Guacamole" %}
+          <p><a href="{{ vre_portal_url }}/workbench/{{ project_code }}/guacamole/#/">{{ vre_portal_url }}/workbench/{{ project_code }}/guacamole/#/</a></p>
+       {% elif request_for == "SuperSet" %}
+          <p><a href="{{ vre_portal_url }}/bi/{{ project_code }}/login/">{{ vre_portal_url }}/bi/{{ project_code }}/login/</a></p>
+       {% endif %}
+       <br>
+       <p>After permission setup, please also mark the request as Completed on the VRE portal.</p>
+    </body>
+</html>
+
