@@ -7,3 +7,4 @@ worker_connections = 5
 accesslog = 'access.log'
 errorlog = 'error.log'
 loglevel = 'info'
+
