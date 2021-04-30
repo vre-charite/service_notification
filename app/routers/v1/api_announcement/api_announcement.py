@@ -59,9 +59,9 @@ class APIAnnouncement:
         api_response = POSTAnnouncementResponse()
 
         if len(data.content) > 250:
-            api_response.set_error_msg("Content to long")
+            api_response.error_msg = "Content to long"
             api_response.code = EAPIResponseCode.bad_request
-            return api_response.to_dict, api_response.code
+            return api_response.json_response()
 
         model_data = {
             "project_code": data.project_code,

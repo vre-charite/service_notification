@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <body>
+      <h4>Hello {{ user_first }},</h4>
+      <p><b>{{ inviter_name }}({{ inviter_email }}) has invited you to the following project on the VRE:</b></p>
+      <p>Project Name: {{ project_name }}</p>
+      <p>Project Code: {{ project_code }}</p>
+      <p>Project Role: {{ project_role }}</p>
+      <p>To access your Projects on the VRE Portal, navigate to <a href="{{ url }}">{{ url }}</a> and log in with your Charité credentials.  You will be prompted to accept the Terms of Use and will be given access to your VRE Account and any Projects you have been invited to.</p>
+      <p>If you require assistance logging into your Charité account or need to reset your password, please contact the Charité IT Helpdesk at {{ helpdesk_email }}.  For additional information about the VRE, you can check out the <a href="{{ domain }}/xwiki/wiki/vrepublic/view/Main/user_guide/">VRE User Guide.</a></p>
+      <p>Warm Regards,</p>
+      <p>- The VRE Support Team</p>
+    </body>
+</html>

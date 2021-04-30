@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <body>
+      <h4>Hello {{ user_email }},</h4>
+      <p><b>{{ inviter_name }}({{ inviter_email }}) has sent you an invitation to join the VRE!</b></p>
+      <p>Platform Role: {{ platform_role }}</p>
+      <p>All external VRE users who are not employees of the Charité and have not been granted access to a Charité system (e.g., email or VPN) are required to submit a request for an account in the Charité Active Directory to be granted access to the VRE and its integrated workbench tools.</p>
+      <p>To submit your request, please complete the steps below:</p>
+      <ol>
+        <li>
+          Complete the <i>Charité Active Directory Access Request Form</i> attached to this email.
+          <ul>
+            <li>Complete all fields in the Datum des Antrages section ensuring that the email address entered into the form matches the email address that this email was sent to: {{ user_email }}</li>
+            <li>Leave the Antragsgrundlage and Angaben zum Antragsteller sections blank if you do not have this information</li>
+            <li>Sign and date the form</li>
+          </ul>
+        </li>
+        <li>Send the completed and signed form to the VRE administrator at {{ admin_email }} for processing and approval.</li>
+      </ol>
+      <p>Once approval is received for your Charité Active Directory account, you will receive a confirmation email from the Charité Geschäftsbereich IT with your account details, which you can then use to log into the VRE Portal at <a href="{{ url }}">{{ url }}</a>.
+      <p>If you have questions about how to fill out the form, please contact your Charité partner for assistance, or send an email to {{ support_email }}.</p>
+      <p>Warm Regards,</p>
+      <p>- The VRE Support Team</p>
+    </body>
+</html>
