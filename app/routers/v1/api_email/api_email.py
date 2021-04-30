@@ -12,14 +12,14 @@ from email.mime.application import MIMEApplication
 from multiprocessing import Process
 import smtplib
 
-#from services.service_logger.logger_factory_service import SrvLoggerFactory
+from services.service_logger.logger_factory_service import SrvLoggerFactory
 from app.config import ConfigClass
 from app.models.models_email import POSTEmail, POSTEmailResponse
 from app.models.base_models import EAPIResponseCode
 from .utils import allowed_file, is_image
 
 router = APIRouter()
-#_logger = SrvLoggerFactory('api_emails').get_logger()
+_logger = SrvLoggerFactory('api_emails').get_logger()
 
 def send_emails(receivers, sender, subject, text, msg_type, attachments):
     try:
@@ -32,9 +32,10 @@ def send_emails(receivers, sender, subject, text, msg_type, attachments):
                 ConfigClass.postfix, ConfigClass.smtp_port)
             client.login(ConfigClass.smtp_user, ConfigClass.smtp_pass)
 
-        #_logger.info('email server connection established')
+        _logger.info('email server connection established')
     except smtplib.socket.gaierror as e:
-        #_logger.exception(f'Error connecting with Mail host, {e}')
+        _logger.exception(
+            f'Error connecting with Mail host, {e}')
         api_response.result = str(e)
         api_response.code = EAPIResponseCode.internal_error
         return api_response.json_response()
@@ -53,11 +54,12 @@ def send_emails(receivers, sender, subject, text, msg_type, attachments):
             msg.attach(MIMEText(text, 'html', 'utf-8'))
 
         try:
-            #_logger.info(f"\nto: {to}\nfrom: {sender}\nsubject: {msg['Subject']}")
+            _logger.info(f"\nto: {to}\nfrom: {sender}\nsubject: {msg['Subject']}")
             print(msg)
             client.sendmail(sender, to, msg.as_string())
         except Exception as e:
-            #_logger.exception(f'Error when sending email to {to}, {e}')
+            _logger.exception(
+                f'Error when sending email to {to}, {e}')
             api_response.result = str(e)
             api_response.code = EAPIResponseCode.internal_error
             return api_response.json_response()
@@ -80,7 +82,7 @@ class WriteEmails:
             return api_response.json_response()
 
         if not text and not template:
-            #_logger.exception('Text or template is required')
+            _logger.exception('Text or template is required')
             api_response.result = 'Text or template is required'
             api_response.code = EAPIResponseCode.bad_request
             return api_response.json_response()
@@ -130,8 +132,8 @@ class WriteEmails:
         log_data = data.__dict__.copy()
         if log_data.get("attachments"):
             del log_data["attachments"]
-        #_logger.info(f'payload: {log_data}')
-        #_logger.info(f'receiver: {data.receiver}')
+        _logger.info(f'payload: {log_data}')
+        _logger.info(f'receiver: {data.receiver}')
 
         # Open the SMTP connection just to test that it's working before doing the real sending in the background
         try:
@@ -144,7 +146,7 @@ class WriteEmails:
                     ConfigClass.postfix, ConfigClass.smtp_port)
                 client.login(ConfigClass.smtp_user, ConfigClass.smtp_pass)
 
-            #_logger.info('email server connection established')
+            _logger.info('email server connection established')
         except smtplib.socket.gaierror as e:
             api_response.result = str(e)
             api_response.code = EAPIResponseCode.internal_error
@@ -157,6 +159,6 @@ class WriteEmails:
         )
         p.daemon = True
         p.start()
-        #_logger.info(f'Email sent successfully to {data.receiver}')
+        _logger.info(f'Email sent successfully to {data.receiver}')
         api_response.result = "Email sent successfully. "
         return api_response.json_response()
