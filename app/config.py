@@ -17,14 +17,13 @@ class ConfigClass(object):
     version = "1.1.0"
 
     RDS_HOST = "opsdb.utility"
-    # RDS_HOST = '10.3.7.215'
     RDS_PORT = "5432"
     RDS_DBNAME = "INDOC_VRE"
     RDS_USER = "postgres"
     RDS_PWD = "postgres"
     if env == 'charite':
         RDS_USER = "indoc_vre"
-        RDS_PWD = "opsdb-jrjmfa9svvC"
+        RDS_PWD = os.environ.get('RDS_PWD')
     RDS_SCHEMA_DEFAULT = "indoc_vre"
 
     SQLALCHEMY_DATABASE_URI = f"postgresql://{RDS_USER}:{RDS_PWD}@{RDS_HOST}/{RDS_DBNAME}"
