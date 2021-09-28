@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from app.models.base_models import APIResponse
 
 
-class POSTEmail(APIResponse):
+class POSTEmail(BaseModel):
     sender: str
     receiver: list 
     subject: str = ""
