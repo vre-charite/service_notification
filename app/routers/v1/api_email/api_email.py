@@ -1,29 +1,36 @@
-from fastapi import APIRouter
-from fastapi_utils import cbv
-from fastapi.templating import Jinja2Templates
-import jinja2
 import base64
 import os
+import smtplib
 from email.header import Header
+from email.mime.application import MIMEApplication
+from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email.mime.application import MIMEApplication
 from multiprocessing import Process
-import smtplib
 
-from services.service_logger.logger_factory_service import SrvLoggerFactory
+import jinja2
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
+from fastapi_utils import cbv
+
 from app.config import ConfigClass
-from app.models.models_email import POSTEmail, POSTEmailResponse
+from app.models.base_models import APIResponse
 from app.models.base_models import EAPIResponseCode
-from .utils import allowed_file, is_image
+from app.models.models_email import POSTEmail
+from app.models.models_email import POSTEmailResponse
+from services.service_logger.logger_factory_service import SrvLoggerFactory
+
+from .utils import allowed_file
+from .utils import is_image
 
 router = APIRouter()
 _logger = SrvLoggerFactory('api_emails').get_logger()
 
-def send_emails(receivers, sender, subject, text, msg_type, attachments):
+
+def send_emails(receivers, sender, subject, text, msg_type, attachments) -> JSONResponse:
     try:
-        env = os.environ.get('env')
+        env = ConfigClass.env
         if env is None or env == 'charite':
             client = smtplib.SMTP(
                 ConfigClass.POSTFIX_URL, ConfigClass.POSTFIX_PORT)
@@ -36,6 +43,7 @@ def send_emails(receivers, sender, subject, text, msg_type, attachments):
     except smtplib.socket.gaierror as e:
         _logger.exception(
             f'Error connecting with Mail host, {e}')
+        api_response = APIResponse()
         api_response.result = str(e)
         api_response.code = EAPIResponseCode.internal_error
         return api_response.json_response()
@@ -43,7 +51,7 @@ def send_emails(receivers, sender, subject, text, msg_type, attachments):
     for to in receivers:
         msg = MIMEMultipart()
         msg['From'] = sender
-        msg['To'] =  to 
+        msg['To'] = to
         msg['Subject'] = Header(subject, 'utf-8')
         for attachment in attachments:
             msg.attach(attachment)
@@ -55,11 +63,11 @@ def send_emails(receivers, sender, subject, text, msg_type, attachments):
 
         try:
             _logger.info(f"\nto: {to}\nfrom: {sender}\nsubject: {msg['Subject']}")
-            print(msg)
             client.sendmail(sender, to, msg.as_string())
         except Exception as e:
             _logger.exception(
                 f'Error when sending email to {to}, {e}')
+            api_response = APIResponse()
             api_response.result = str(e)
             api_response.code = EAPIResponseCode.internal_error
             return api_response.json_response()
@@ -91,7 +99,7 @@ class WriteEmails:
             try:
                 template = templates.get_template(data.template)
                 text = template.render(data.template_kwargs)
-            except jinja2.exceptions.TemplateNotFound as e:
+            except jinja2.exceptions.TemplateNotFound:
                 api_response.result = 'Template not found'
                 api_response.code = EAPIResponseCode.not_found
                 return api_response.json_response()
@@ -137,7 +145,7 @@ class WriteEmails:
 
         # Open the SMTP connection just to test that it's working before doing the real sending in the background
         try:
-            env = os.environ.get('env')
+            env = ConfigClass.env
             if env is None or env == 'charite':
                 client = smtplib.SMTP(
                     ConfigClass.POSTFIX_URL, ConfigClass.POSTFIX_PORT)

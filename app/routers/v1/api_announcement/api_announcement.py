@@ -1,14 +1,20 @@
-from fastapi import APIRouter, Depends
-from fastapi_utils.cbv import cbv
-from fastapi_sqlalchemy import db
-from app.models.base_models import EAPIResponseCode
-from app.models.models_announcement import GETAnnouncementResponse, POSTAnnouncementResponse, \
-        POSTAnnouncement, GETAnnouncement
-from app.models.sql_announcement import AnnouncementModel
-from datetime import datetime
 import time
 
+from fastapi import APIRouter
+from fastapi import Depends
+from fastapi_sqlalchemy import db
+from fastapi_utils.cbv import cbv
+from sqlalchemy.exc import IntegrityError
+
+from app.models.base_models import EAPIResponseCode
+from app.models.models_announcement import GETAnnouncement
+from app.models.models_announcement import GETAnnouncementResponse
+from app.models.models_announcement import POSTAnnouncement
+from app.models.models_announcement import POSTAnnouncementResponse
+from app.models.sql_announcement import AnnouncementModel
+
 router = APIRouter()
+
 
 @cbv(router)
 class APIAnnouncement:
@@ -35,15 +41,16 @@ class APIAnnouncement:
                 sort_param = getattr(AnnouncementModel, params.sorting).desc()
             announcements = db.session.query(AnnouncementModel).filter_by(**query_data).order_by(sort_param)
         else:
+            sort_param = getattr(AnnouncementModel, params.sorting).asc()
             announcements = db.session.query(AnnouncementModel).filter_by(**query_data).order_by(sort_param)
 
         if params.start_date and params.end_date:
             announcements = announcements.filter(
-                AnnouncementModel.date >= params.start_date, 
+                AnnouncementModel.date >= params.start_date,
                 AnnouncementModel.date <= params.end_date
             )
         total = announcements.count()
-        announcements = announcements.limit(params.page_size).offset(params.page*params.page_size)
+        announcements = announcements.limit(params.page_size).offset(params.page * params.page_size)
         announcements = announcements.all()
         results = []
         for announcement in announcements:
@@ -74,12 +81,9 @@ class APIAnnouncement:
             db.session.add(announcement)
             db.session.commit()
             db.session.refresh(announcement)
-        except sqlalchemy.exc.IntegrityError as e:
+        except IntegrityError:
             api_response.set_error_msg("project_code and version already exist in db")
             api_response.set_code(EAPIResponseCode.bad_request)
             return api_response.to_dict, api_response.code
         api_response.result = announcement.to_dict()
         return api_response.json_response()
-
-
-

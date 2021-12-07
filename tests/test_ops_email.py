@@ -9,6 +9,7 @@ from tests.logger import Logger
 import base64
 from fastapi.testclient import TestClient
 from app.main import app
+import platform
 
 
 class TestWriteEmails(unittest.TestCase):
@@ -378,7 +379,10 @@ class TestWriteEmails(unittest.TestCase):
 
         self.log.info(f"Current directory {dir_path}")
         if not path.isfile(large_file_path):
-            os.system('fallocate -l 2.5M ' + large_file_path)
+            if platform.system() == 'Darwin':
+                os.system('mkfile -n 2.5M ' + large_file_path)
+            else:
+                os.system('fallocate -l 2.5M ' + large_file_path)
 
         with open(large_file_path, 'rb') as img:
             payload = {"sender": "notification@vre",

@@ -3,5 +3,25 @@ services:
   web:
     build: .
     ports:
-      - "5065:5065"
-    network_mode: host
+      - "5065:8000"
+    environment:
+      port: 8000
+      POSTFIX: mailhog
+      SMTP_USER: user
+      SMTP_PASS: pass
+      SMTP_PORT: 1025
+      POSTFIX_URL: mailhog
+      POSTFIX_PORT: 1025
+      RDS_HOST: localhost
+      RDS_PORT: 5432
+      RDS_DBNAME: notification
+      RDS_USER: postgres
+      RDS_PWD: password
+      RDS_SCHEMA_DEFAULT: test
+    depends_on: 
+      - mailhog
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"

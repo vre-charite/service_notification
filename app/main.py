@@ -23,4 +23,3 @@ app.add_middleware(
 # API registry
 ## v1
 api_registry(app)
-
