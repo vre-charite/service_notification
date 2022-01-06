@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: notification
-          image: 10.32.42.225:5000/notification:<VERSION>
+          image: s-hdp-vre-v007.charite.de/notification:<VERSION>
           ports:
             - containerPort: 5065
           env:
