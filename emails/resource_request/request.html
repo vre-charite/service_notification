@@ -1,7 +1,29 @@
+<!--
+ Copyright 2022 Indoc Research
+ 
+ Licensed under the EUPL, Version 1.2 or – as soon they
+ will be approved by the European Commission - subsequent
+ versions of the EUPL (the "Licence");
+ You may not use this work except in compliance with the
+ Licence.
+ You may obtain a copy of the Licence at:
+ 
+ https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ 
+ Unless required by applicable law or agreed to in
+ writing, software distributed under the Licence is
+ distributed on an "AS IS" basis,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ express or implied.
+ See the Licence for the specific language governing
+ permissions and limitations under the Licence.
+ 
+-->
+
 <!DOCTYPE html>
 <html>
     <body>
-        <h4>Dear VRE Administrator,</h4>
+        <h4>Dear {{ product_name }} Administrator,</h4>
         <p>{{ username }} has requested access into {{ request_for }} in the project:</p>
         <p>Project Name: {{ project_name }}</p>
         <p>Project Code: {{ project_code }}</p>
@@ -9,12 +31,11 @@
         <br>
         <p>In order to setup the permission, please visit the link below:</p>
         {% if request_for == "Guacamole" %}
-          <p><a href="{{ vre_portal_url }}/workbench/{{ project_code }}/guacamole/#/">{{ vre_portal_url }}/workbench/{{ project_code }}/guacamole/#/</a></p>
+          <p><a href="{{ portal_url }}/workbench/{{ project_code }}/guacamole/#/">{{ portal_url }}/workbench/{{ project_code }}/guacamole/#/</a></p>
        {% elif request_for == "SuperSet" %}
-          <p><a href="{{ vre_portal_url }}/bi/{{ project_code }}/login/">{{ vre_portal_url }}/bi/{{ project_code }}/login/</a></p>
+          <p><a href="{{ portal_url }}/bi/{{ project_code }}/login/">{{ portal_url }}/bi/{{ project_code }}/login/</a></p>
        {% endif %}
        <br>
-       <p>After permission setup, please also mark the request as Completed on the VRE portal.</p>
+       <p>After permission setup, please also mark the request as Completed on the {{ product_name }} portal.</p>
     </body>
 </html>
-

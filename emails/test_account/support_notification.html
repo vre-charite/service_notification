@@ -1,3 +1,25 @@
+<!--
+ Copyright 2022 Indoc Research
+ 
+ Licensed under the EUPL, Version 1.2 or – as soon they
+ will be approved by the European Commission - subsequent
+ versions of the EUPL (the "Licence");
+ You may not use this work except in compliance with the
+ Licence.
+ You may obtain a copy of the Licence at:
+ 
+ https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ 
+ Unless required by applicable law or agreed to in
+ writing, software distributed under the Licence is
+ distributed on an "AS IS" basis,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ express or implied.
+ See the Licence for the specific language governing
+ permissions and limitations under the Licence.
+ 
+-->
+
 <html>
   <body>
     <table>
@@ -67,12 +89,12 @@
           <td valign="top" style="vertical-align: top;"><b>Notes:&nbsp;</b></td>
           <td>
             <p>The requester has provided details regarding a contract or Data Processing Agreement that require review, please see details below:</p>
-            <p><b>Why are you interested in using the VRE?</b></p>
+            <p><b>Why are you interested in using {{ product_name }}?</b></p>
             <p>{{ why_interested }}</p>
           </td>
         </tr>
       {% endif %}
     </table>
-    <p>This is an automated notification, please do not reply.  To view and edit user accounts on the VRE, please navigate to the <a href="{{ url }}/users">VRE User Management</p>
+    <p>This is an automated notification, please do not reply.  To view and edit user accounts on {{ product_name }}, please navigate to the <a href="{{ url }}/users">{{ product_name }} User Management</p>
   </body>
 </html>

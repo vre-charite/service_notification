@@ -1,27 +1,88 @@
+// Copyright 2022 Indoc Research
+// 
+// Licensed under the EUPL, Version 1.2 or – as soon they
+// will be approved by the European Commission - subsequent
+// versions of the EUPL (the "Licence");
+// You may not use this work except in compliance with the
+// Licence.
+// You may obtain a copy of the Licence at:
+// 
+// https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+// 
+// Unless required by applicable law or agreed to in
+// writing, software distributed under the Licence is
+// distributed on an "AS IS" basis,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+// express or implied.
+// See the Licence for the specific language governing
+// permissions and limitations under the Licence.
+// 
+
 version: '3'
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        PIP_USERNAME: "${PIP_USERNAME}"
+        PIP_PASSWORD: "${PIP_PASSWORD}"
     ports:
       - "5065:8000"
     environment:
       port: 8000
-      POSTFIX: mailhog
-      SMTP_USER: user
-      SMTP_PASS: pass
-      SMTP_PORT: 1025
       POSTFIX_URL: mailhog
       POSTFIX_PORT: 1025
-      RDS_HOST: localhost
-      RDS_PORT: 5432
-      RDS_DBNAME: notification
       RDS_USER: postgres
-      RDS_PWD: password
-      RDS_SCHEMA_DEFAULT: test
-    depends_on: 
+      RDS_PWD: postgres
+      RDS_HOST: db
+      RDS_PORT: 5432
+      NOTIFICATIONS_SCHEMA: notifications
+      ANNOUNCEMENTS_SCHEMA: announcements
+      SQLALCHEMY_DATABASE_URI: postgresql://postgres:postgres@db:5432/notifications
+    volumes:
+    - .:/usr/src/app
+    depends_on:
       - mailhog
+      - db
+    command:
+      sh -c "
+        pip install alembic
+
+        alembic upgrade head
+
+        uvicorn app.main:app --reload --host 0.0.0.0
+      "
+
   mailhog:
     image: mailhog/mailhog
     ports:
       - "1025:1025"
       - "8025:8025"
+
+  db:
+    image: 'postgres:12-alpine'
+    ports:
+      - 15432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./migrations/scripts/create_notifications_db.sql:/docker-entrypoint-initdb.d/01.sql
+  pgadmin:
+    image: 'dpage/pgadmin4'
+    ports:
+      - "8750:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    logging:
+      driver: none
+    volumes:
+      - ./local_config/pgadmin/:/var/lib/pgadmin/
+    depends_on:
+      - db
+
+networks:
+  default:
+    external:
+      name: pilot-network

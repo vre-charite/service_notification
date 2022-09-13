@@ -1,12 +1,34 @@
+<!--
+ Copyright 2022 Indoc Research
+ 
+ Licensed under the EUPL, Version 1.2 or – as soon they
+ will be approved by the European Commission - subsequent
+ versions of the EUPL (the "Licence");
+ You may not use this work except in compliance with the
+ Licence.
+ You may obtain a copy of the Licence at:
+ 
+ https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ 
+ Unless required by applicable law or agreed to in
+ writing, software distributed under the Licence is
+ distributed on an "AS IS" basis,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ express or implied.
+ See the Licence for the specific language governing
+ permissions and limitations under the Licence.
+ 
+-->
+
 <!DOCTYPE html>
 <html>
     <body>
       <h4>Hello {{ user_first }},</h4>
-      <p><b>{{ inviter_name }}({{ inviter_email }}) has invited you to join the VRE!</b></p>
+      <p><b>{{ inviter_name }}({{ inviter_email }}) has invited you to join {{ product_name }}!</b></p>
       <p>Platform Role: {{ platform_role }}</p>
-      <p>To access your Projects on the VRE Portal, navigate to <a href="{{ url }}">{{ url }}</a> and log in with your Charité credentials.  You will be prompted to accept the Terms of Use and will be given access to your VRE Account and any Projects you have been invited to.</p>
-      <p>If you require assistance logging into your Charité account or need to reset your password, please contact the Charité IT Helpdesk at {{ helpdesk_email }}.  For additional information about the VRE, you can check out the <a href="{{ domain }}/xwiki/wiki/vrepublic/view/Main/user_guide/">VRE User Guide.</a></p>
+      <p>To access your Projects on the {{ product_name }} Portal, navigate to <a href="{{ url }}">{{ url }}</a> and log in with your {{ company_name }} credentials.  You will be prompted to accept the Terms of Use and will be given access to your {{ product_name }} Account and any Projects you have been invited to.</p>
+      <p>If you require assistance logging into your {{ company_name }} account or need to reset your password, please contact the {{ company_name }} IT Helpdesk at {{ helpdesk_email }}.  For additional information about {{ product_name }}, you can check out the <a href="{{ domain }}/xwiki/wiki/vrepublic/view/Main/user_guide/">{{ product_name }} User Guide.</a></p>
       <p>Warm Regards,</p>
-      <p>- The VRE Support Team</p>
+      <p>- The {{ product_name }} Support Team</p>
     </body>
 </html>
