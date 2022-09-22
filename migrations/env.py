@@ -1,17 +1,38 @@
-from logging.config import fileConfig
+# Copyright 2022 Indoc Research
+# 
+# Licensed under the EUPL, Version 1.2 or – as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence");
+# You may not use this work except in compliance with the
+# Licence.
+# You may obtain a copy of the Licence at:
+# 
+# https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+# 
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
+# 
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-from sqlalchemy.ext.declarative import declarative_base
-
-from alembic import context
 import os
 import sys
+
+sys.path.append(os.getcwd())
+
+from logging.config import fileConfig
+
+from alembic import context
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
+
+from app.models.sql_announcement import Base
+
 base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(base_dir)
-from app.models.sql_announcement import Base 
-from app.models.sql_announcement import AnnouncementModel 
-
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,9 +48,9 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-if not os.environ.get("SQLALCHEMY_DATABASE_URI"):
-    raise Exception("Must set SQLALCHEMY_DATABASE_URI environment var")
-config.set_main_option('sqlalchemy.url', os.environ.get("SQLALCHEMY_DATABASE_URI"))
+if not os.environ.get('SQLALCHEMY_DATABASE_URI'):
+    raise Exception('Must set SQLALCHEMY_DATABASE_URI environment var')
+config.set_main_option('sqlalchemy.url', os.environ.get('SQLALCHEMY_DATABASE_URI'))
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -47,14 +68,13 @@ def run_migrations_offline():
 
     Calls to context.execute() here emit the given string to the
     script output.
-
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = config.get_main_option('sqlalchemy.url')
     context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
-        dialect_opts={"paramstyle": "named"},
+        dialect_opts={'paramstyle': 'named'},
     )
 
     with context.begin_transaction():
@@ -64,20 +84,16 @@ def run_migrations_offline():
 def run_migrations_online():
     """Run migrations in 'online' mode.
 
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
+    In this scenario we need to create an Engine and associate a connection with the context.
     """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
+        prefix='sqlalchemy.',
         poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

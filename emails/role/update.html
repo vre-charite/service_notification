@@ -1,16 +1,38 @@
-<!DOCTYPE html>                                                                                             
+<!--
+ Copyright 2022 Indoc Research
+ 
+ Licensed under the EUPL, Version 1.2 or – as soon they
+ will be approved by the European Commission - subsequent
+ versions of the EUPL (the "Licence");
+ You may not use this work except in compliance with the
+ Licence.
+ You may obtain a copy of the Licence at:
+ 
+ https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+ 
+ Unless required by applicable law or agreed to in
+ writing, software distributed under the Licence is
+ distributed on an "AS IS" basis,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ express or implied.
+ See the Licence for the specific language governing
+ permissions and limitations under the Licence.
+ 
+-->
+
+<!DOCTYPE html>
 <html>
-  <body>                                                                                                     
-    <h4>Dear {{ username }},</h4>                                                                                      
-    <p>{{ admin_name }} has modified your access in the following project:</p><br>                                       
-    <p>Project Name: {{ project_name }}</p>                                                                                
-    <p>New Role: {{ role }}</p><br>                                                                                
-      <p>In order to access the project please visit the link below and login using your credentials: </p>   
-      <a href="{{ login_url }}">{{ login_url }}</a><br>                                                                                
+  <body>
+    <h4>Dear {{ username }},</h4>
+    <p>{{ admin_name }} has modified your access in the following project:</p><br>
+    <p>Project Name: {{ project_name }}</p>
+    <p>New Role: {{ role }}</p><br>
+      <p>In order to access the project please visit the link below and login using your credentials: </p>
+      <a href="{{ login_url }}">{{ login_url }}</a><br>
        <p>If you are having difficulty accessing the link please copy and paste the following into your browser:</p>
-       <p>{{ login_url }}</p><br>                                                                                          
+       <p>{{ login_url }}</p><br>
        <p>If you believe this modification was made in error please contact the Platform Administrator: <a href="mailto: {{ admin_email }}">{{ admin_email }}</a></p>
-       <br><br><br><br>                                                                                       
+       <br><br><br><br>
        <p>This is an automated message. Should you require assistance please contact: <a href="mailto: {{ support_email }}">{{ support_email }}</a></p><br>
-   </body>                                                                                                    
+   </body>
 </html>

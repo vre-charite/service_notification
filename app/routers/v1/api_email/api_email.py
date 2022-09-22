@@ -1,5 +1,24 @@
+# Copyright 2022 Indoc Research
+# 
+# Licensed under the EUPL, Version 1.2 or – as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence");
+# You may not use this work except in compliance with the
+# Licence.
+# You may obtain a copy of the Licence at:
+# 
+# https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+# 
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
+# 
+
 import base64
-import os
 import smtplib
 from email.header import Header
 from email.mime.application import MIMEApplication
@@ -13,36 +32,29 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi_utils import cbv
+from logger import LoggerFactory
 
 from app.config import ConfigClass
 from app.models.base_models import APIResponse
 from app.models.base_models import EAPIResponseCode
 from app.models.models_email import POSTEmail
 from app.models.models_email import POSTEmailResponse
-from services.service_logger.logger_factory_service import SrvLoggerFactory
 
 from .utils import allowed_file
 from .utils import is_image
 
 router = APIRouter()
-_logger = SrvLoggerFactory('api_emails').get_logger()
+_logger = LoggerFactory('api_emails').get_logger()
 
 
 def send_emails(receivers, sender, subject, text, msg_type, attachments) -> JSONResponse:
     try:
-        env = ConfigClass.env
-        if env is None or env == 'charite':
-            client = smtplib.SMTP(
-                ConfigClass.POSTFIX_URL, ConfigClass.POSTFIX_PORT)
-        else:
-            client = smtplib.SMTP(
-                ConfigClass.postfix, ConfigClass.smtp_port)
+        client = smtplib.SMTP(ConfigClass.POSTFIX_URL, ConfigClass.POSTFIX_PORT)
+        if ConfigClass.smtp_user and ConfigClass.smtp_pass:
             client.login(ConfigClass.smtp_user, ConfigClass.smtp_pass)
-
         _logger.info('email server connection established')
     except smtplib.socket.gaierror as e:
-        _logger.exception(
-            f'Error connecting with Mail host, {e}')
+        _logger.exception(f'Error connecting with Mail host, {e}')
         api_response = APIResponse()
         api_response.result = str(e)
         api_response.code = EAPIResponseCode.internal_error
@@ -65,8 +77,7 @@ def send_emails(receivers, sender, subject, text, msg_type, attachments) -> JSON
             _logger.info(f"\nto: {to}\nfrom: {sender}\nsubject: {msg['Subject']}")
             client.sendmail(sender, to, msg.as_string())
         except Exception as e:
-            _logger.exception(
-                f'Error when sending email to {to}, {e}')
+            _logger.exception(f'Error when sending email to {to}, {e}')
             api_response = APIResponse()
             api_response.result = str(e)
             api_response.code = EAPIResponseCode.internal_error
@@ -76,11 +87,10 @@ def send_emails(receivers, sender, subject, text, msg_type, attachments) -> JSON
 
 @cbv.cbv(router)
 class WriteEmails:
-
-    @router.post('/', response_model=POSTEmailResponse, summary="Send emails")
+    @router.post('/', response_model=POSTEmailResponse, summary='Send emails')
     async def post(self, data: POSTEmail):
         api_response = POSTEmailResponse()
-        templates = Jinja2Templates(directory="emails")
+        templates = Jinja2Templates(directory='emails')
         text = data.message
         template = data.template
 
@@ -106,10 +116,10 @@ class WriteEmails:
 
         attachments = []
         for file in data.attachments:
-            if "," in file.get("data"):
-                attach_data = base64.b64decode(file.get("data").split(",")[1])
+            if ',' in file.get('data'):
+                attach_data = base64.b64decode(file.get('data').split(',')[1])
             else:
-                attach_data = base64.b64decode(file.get("data"))
+                attach_data = base64.b64decode(file.get('data'))
 
             # check if bigger to 2mb
             if len(attach_data) > 2000000:
@@ -117,7 +127,7 @@ class WriteEmails:
                 api_response.code = EAPIResponseCode.to_large
                 return api_response.json_response()
 
-            filename = file.get("name")
+            filename = file.get('name')
             if not allowed_file(filename):
                 api_response.result = 'File type not allowed'
                 api_response.code = EAPIResponseCode.bad_request
@@ -138,22 +148,16 @@ class WriteEmails:
             return api_response.json_response()
 
         log_data = data.__dict__.copy()
-        if log_data.get("attachments"):
-            del log_data["attachments"]
+        if log_data.get('attachments'):
+            del log_data['attachments']
         _logger.info(f'payload: {log_data}')
         _logger.info(f'receiver: {data.receiver}')
 
         # Open the SMTP connection just to test that it's working before doing the real sending in the background
         try:
-            env = ConfigClass.env
-            if env is None or env == 'charite':
-                client = smtplib.SMTP(
-                    ConfigClass.POSTFIX_URL, ConfigClass.POSTFIX_PORT)
-            else:
-                client = smtplib.SMTP(
-                    ConfigClass.postfix, ConfigClass.smtp_port)
+            client = smtplib.SMTP(ConfigClass.POSTFIX_URL, ConfigClass.POSTFIX_PORT)
+            if ConfigClass.smtp_user and ConfigClass.smtp_pass:
                 client.login(ConfigClass.smtp_user, ConfigClass.smtp_pass)
-
             _logger.info('email server connection established')
         except smtplib.socket.gaierror as e:
             api_response.result = str(e)
@@ -168,5 +172,5 @@ class WriteEmails:
         p.daemon = True
         p.start()
         _logger.info(f'Email sent successfully to {data.receiver}')
-        api_response.result = "Email sent successfully. "
+        api_response.result = 'Email sent successfully. '
         return api_response.json_response()
